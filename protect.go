@@ -4,14 +4,13 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/labstack/echo/v5"
 	"github.com/pocketbase/pocketbase"
 	"github.com/pocketbase/pocketbase/core"
 	"github.com/pocketbase/pocketbase/models"
 	"github.com/pocketbase/pocketbase/models/schema"
 	"github.com/pocketbase/pocketbase/tools/filesystem"
-	"github.com/pocketbase/pocketbase/tools/types"
 	s3hook "github.com/shynome/pocketbase-s3/hook"
 	"golang.org/x/sync/errgroup"
 )
@@ -65,10 +64,10 @@ func protectFile(ctx context.Context, app *pocketbase.PocketBase, record *models
 		for _, file := range files {
 			originPath := baseFilesPath + "/" + file.Name
 			eg.Go(func() error {
-				output, err := client.PutObjectAclWithContext(ctx, &s3.PutObjectAclInput{
+				output, err := client.PutObjectAcl(ctx, &s3.PutObjectAclInput{
 					Bucket: &bucket,
 					Key:    &originPath,
-					ACL:    types.Pointer("private"),
+					ACL:    "private",
 				})
 				if err != nil {
 					return err

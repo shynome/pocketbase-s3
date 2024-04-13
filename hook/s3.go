@@ -4,14 +4,14 @@ import (
 	"context"
 	"unsafe"
 
-	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/pocketbase/pocketbase/tools/filesystem"
 	"gocloud.dev/blob"
 )
 
-func GetClient(fs *filesystem.System) *s3.S3 {
+func GetClient(fs *filesystem.System) *s3.Client {
 	b := GetBucket(fs)
-	var x *s3.S3
+	var x *s3.Client
 	if ok := b.As(&x); !ok {
 		panic("get *s3.S3 failed")
 	}

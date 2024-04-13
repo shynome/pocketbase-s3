@@ -6,7 +6,7 @@ import (
 	"mime"
 	"net/http"
 
-	"github.com/aws/aws-sdk-go/service/s3"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/labstack/echo/v5"
 	"github.com/pocketbase/pocketbase"
 	"github.com/pocketbase/pocketbase/core"
@@ -70,7 +70,7 @@ func fixObjectHeaders(ctx context.Context, app *pocketbase.PocketBase, record *m
 			originPath := baseFilesPath + "/" + file.Name
 			disposition := mime.FormatMediaType("attachment", map[string]string{"filename": file.OriginalName})
 			eg.Go(func() error {
-				obj, err := client.GetObjectWithContext(ctx, &s3.GetObjectInput{
+				obj, err := client.GetObject(ctx, &s3.GetObjectInput{
 					Bucket: &bucket,
 					Key:    &originPath,
 				})
@@ -80,7 +80,7 @@ func fixObjectHeaders(ctx context.Context, app *pocketbase.PocketBase, record *m
 				if obj.ContentDisposition != nil {
 					return nil
 				}
-				output, err := client.CopyObjectWithContext(ctx, &s3.CopyObjectInput{
+				output, err := client.CopyObject(ctx, &s3.CopyObjectInput{
 					Bucket:     &bucket,
 					Key:        &originPath,
 					CopySource: types.Pointer(fmt.Sprintf("%s/%s", bucket, originPath)),
